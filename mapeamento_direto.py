@@ -23,6 +23,7 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
 
     hits = 0
     misses = 0
+    trocas = 0;
 
     for value in pos_memoria:
 
@@ -38,18 +39,24 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
                 break
         
         if not found:
+            if cache[index] != -1:
+                trocas += 1
+                print(f"Miss: Valor {cache[index]} foi substituido por {value} na posição {index} do cache!")
+            else:
+                print(f"Miss: Valor {value} foi armazenado na posição {index} do cache!")
+
             cache[index] = value
             misses += 1
-            print(f"Miss: Valor {value} foi armazenado na posição {index} do cache!")
             imprimir_cache(cache)
 
     print(f"Total de hits: {hits}")
     print(f"Total de misses: {misses}")
+    print(f"Total de trocas: {trocas}")
     print(f"Taxa de acerto: {hits / (hits + misses)}")
 
     print("Cache finalizada: ")
     imprimir_cache(cache)
 
-mapeamento_direto(5, [3, 3, 33, 12, 5])
+mapeamento_direto(5, [3, 8, 13, 18, 23])
 
 
