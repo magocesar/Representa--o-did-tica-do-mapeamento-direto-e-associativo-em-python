@@ -1,38 +1,63 @@
 
-from random import randint
-
-def iniciar_cache(num_conjunto, tamanho_conjunto, numero_palavras):
-    cache = []
-    palavras = []
-
-    for i in range(numero_palavras):
-        palavras.append(-1)
-
-    for i in range(num_conjunto):
-        cache.append([])
+def inicializar_cache(tamanho_conjunto):
+    cache = {}
+    for i in range(2):
+        cache[i] = {}
         for j in range(tamanho_conjunto):
-            cache[i] = [-1, -1, palavras]
-
+            cache[i][j] = -1
+    print("Cache inicializada: ")
+    imprimir_cache(cache)
     return cache
 
 def imprimir_cache(cache):
     print("-=-" * 10)
-    print("DirtyBit - Tag - Valor")
-    for i in range(len(cache)):
-        for j in range(len(cache[i])):
-            print(cache[i][j], end=" ")
-        print()
+    print("Posição - Valor")
+    for k, v in cache.items():
+        print(k, v)
     print("-=-" * 10)
 
+def mapeamento_assoc(politica_de_substituição, pos_memoria):
 
-def memoria_principal(pos_memoria):
-    memoria = []
-    for i in range(pos_memoria):
-        memoria.append(randint(0, 100))
+    cache = inicializar_cache(2)
 
-    return memoria
+    hits = 0
+    miss = 0
+    trocas = 0
 
-imprimir_cache(iniciar_cache(2, 2, 4))
+    lru = [0, 0]
 
+    for value in pos_memoria:
+        pos_cache = value % len(cache)
+        found = False
 
+        for k, v in cache.items():
+            for k2, v2 in v.items():
+                if v2 == value:
+                    hits += 1
+                    print(f"Hit: Valor {value} no bloco {k2} do conjunto {k} do cache!")
+                    found = True
+                    imprimir_cache(cache)
+                    break
         
+        if not found:
+            miss += 1
+            if(cache[pos_cache][0] == -1):
+                cache[pos_cache][0] = value
+                print(f"Miss: Valor {value} foi armazenado no bloco 0 do conjunto {pos_cache} do cache!")
+                imprimir_cache(cache)
+
+            elif(cache[pos_cache][1] == -1):
+                cache[pos_cache][1] = value
+                print(f"Miss: Valor {value} foi armazenado no bloco 1 do conjunto {pos_cache} do cache!")
+                imprimir_cache(cache)       
+            else:
+                trocas += 1
+                if(politica_de_substituição == "LRU"):
+                    valor_ant = cache[pos_cache][lru[pos_cache] % 2]
+                    cache[pos_cache][lru[pos_cache] % 2] = value
+                    lru[pos_cache] += 1
+                    print(f"Miss: Valor {valor_ant} foi substituido por {value} no conjunto {pos_cache} do cache!")
+                    print(lru)
+                    imprimir_cache(cache)
+
+mapeamento_assoc("LRU", [3, 8, 13, 18, 23, 11, 12, 13, 14, 15, 16, 17, 18, 19])

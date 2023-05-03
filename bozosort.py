@@ -86,16 +86,27 @@ def mergeSortImplement(lista):
     end = time()
     print("mergeSort: ", end - start)
 
+def bozoSort(lista):
+    start = time()
+    sortedList = sorted(lista)
+    while lista != sortedList:
+        shuffle(lista)
+    end = time()
+    print("bozoSort: ", end - start)
+
 lista = criarLista(10000)
 
 t1 = Thread(target=bubbleSort, args=(lista,))
 t2 = Thread(target=selectionSort, args=(lista,))
 t3 = Thread(target=insertionSort, args=(lista,))
 t4 = Thread(target=mergeSortImplement, args=(lista,))
+t5 = Thread(target=bozoSort, args=(lista,))
 t1.start()
 t2.start()
 t3.start()
 t4.start()
+t5.start()
+
 
 
 
