@@ -1,24 +1,31 @@
-
-def criar_cache_lru(tamanho_bloco):
+def criar_cache(num_conjuntos, tamanho_bloco):
     
     #Tamanhos permitidos para o bloco
-    tamanhos_permitidos = [1, 2, 4, 8, 16]
-    if(tamanho_bloco not in tamanhos_permitidos):
+    tamanhos_permitidos_bloco = [1, 2, 4, 8, 16]
+    numerosConjuntosPermitidos = [2, 4, 8, 16]
+    if(tamanho_bloco not in tamanhos_permitidos_bloco or num_conjuntos not in numerosConjuntosPermitidos):
         return False
     
     #2 Conjuntos na Cache, "tamanho_bloco" linhas por conjunto
     cache = {}
-    cache[0] = {}
-    cache[1] = {}
-    for i in range(tamanho_bloco):
-        cache[0][i] = -1
-        cache[1][i] = -1
+    for i in range(num_conjuntos):
+        cache[i] = {}
+        for j in range(tamanho_bloco):
+            cache[i][j] = -1
+    return cache
+
+def criar_lru(num_conjuntos):
+
+    numBlocosPermitidos = [2, 4, 8, 16]
+
+    if(num_conjuntos not in numBlocosPermitidos):
+        return False
     
     lru = {}
-    lru[0] = -1
-    lru[1] = -1
+    for i in range(num_conjuntos):
+        lru[i] = -1
+    return lru
 
-    return cache, lru
     
 def print_cache(cache):
     print("-=-" * 10)
@@ -27,12 +34,20 @@ def print_cache(cache):
         print(k, v)
     print("-=-" * 10)
 
-def mapeamento_assoc_LRU(tamanho_bloco, lista_dados_memoria):
+def print_lru(lru):
+    print("LRU:")
+    print("Conjunto - Posição LRU")
+    for k, v in lru.items():
+        print(f'[{k}, {v}]')
+    print("-=-" * 10)
 
-    cache, lru = criar_cache_lru(tamanho_bloco)
+def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
+
+    cache = criar_cache(num_conjuntos, tamanho_bloco)
+    lru = criar_lru(num_conjuntos)
     
-    if(not cache):
-        print("Tamanho de bloco inválido!")
+    if(not cache or not lru):
+        print("Parametros invalidos!")
         return False
     
     print("Cache inicializada: ")
@@ -48,11 +63,13 @@ def mapeamento_assoc_LRU(tamanho_bloco, lista_dados_memoria):
             conjunto = key
             dado = value
 
-            if(dado in cache[0].values() or dado in cache[1].values()):
-                hits += 1
-                print(f"Hit: Valor {dado} no conjunto {conjunto} do cache!")
-                print_cache(cache)
-                print(lru)
+            for i in range(num_conjuntos):
+                if(dado in cache[i].values()):
+                    hits += 1
+                    print(f"Hit: Valor {dado} no conjunto {conjunto} do cache!")
+                    print_cache(cache)
+                    print_lru(lru)
+                    break
 
             else:
                 misses += 1
@@ -64,10 +81,9 @@ def mapeamento_assoc_LRU(tamanho_bloco, lista_dados_memoria):
                             lru[conjunto] = pos + 1
                             print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
                             print_cache(cache)
-                            print(lru)
+                            print_lru(lru)
                             break
                 else:
-                    pos_troca = lru[conjunto] % tamanho_bloco
                     flag = False
                     for pos, dado_cache in cache[conjunto].items():
                         if(dado_cache == -1):
@@ -76,18 +92,21 @@ def mapeamento_assoc_LRU(tamanho_bloco, lista_dados_memoria):
                             lru[conjunto] += 1
                             print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
                             print_cache(cache)
-                            print(lru)
+                            print_lru(lru)
                             break
                     if(not flag):
+                        pos_troca = lru[conjunto] % tamanho_bloco
                         cache[conjunto][pos_troca] = dado
                         lru[conjunto] += 1
+                        trocas += 1
                         print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} do cache!')
                         print_cache(cache)
-                        print(lru)
-                        trocas += 1
-
+                        print_lru(lru)
+    print(f'Hits: {hits}')
+    print(f'Misses: {misses}')
+    print(f'Trocas: {trocas}')
             
 
     
-
-mapeamento_assoc_LRU(8, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {0: 150}, {0: 151}])
+#input int num_conjuntos, int tamanho_bloco, list lista_dados_memoria
+mapeamento_assoc_LRU(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {0: 150}, {0: 151}, {1: 152}])
