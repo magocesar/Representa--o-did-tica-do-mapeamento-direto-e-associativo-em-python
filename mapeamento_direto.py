@@ -17,6 +17,8 @@ def imprimir_cache(cache):
 
 def mapeamento_direto(tamanho_cache, pos_memoria):
     
+    lista_trocas = []
+
     cache = iniciar_cache(tamanho_cache)
 
     imprimir_cache(cache)
@@ -34,6 +36,7 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
             if v == value:
                 hits += 1
                 print(f"Hit: Valor {value} na posição {k} do cache!")
+                lista_trocas.append(f'Hit: Valor {value} na posição {k} do cache!')
                 found = True
                 imprimir_cache(cache)
                 break
@@ -42,8 +45,10 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
             if cache[index] != -1:
                 trocas += 1
                 print(f"Miss: Valor {cache[index]} foi substituido por {value} na posição {index} do cache!")
+                lista_trocas.append(f"Miss: Valor {cache[index]} foi substituido por {value} na posição {index} do cache!")
             else:
                 print(f"Miss: Valor {value} foi armazenado na posição {index} do cache!")
+                lista_trocas.append(f"Miss: Valor {value} foi armazenado na posição {index} do cache!")
 
             cache[index] = value
             misses += 1
@@ -56,7 +61,10 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
 
     print("Cache finalizada: ")
     imprimir_cache(cache)
+    
+    #for string in lista_trocas:
+    #    print(string)
 
-mapeamento_direto(5, [3, 8, 13, 18, 23])
+mapeamento_direto(5, [1, 6, 11, 16, 21])
 
 
