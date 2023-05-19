@@ -45,6 +45,9 @@ def print_lfu(lfu):
         print("\n")
     print("-=-" * 10)
 
+def verficar_menos_usado():
+    
+
 def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
     cache = criar_cache(num_conjuntos, tamanho_bloco)
@@ -76,10 +79,7 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
                         print(f'Hit: Valor {dado} na posição {pos} do conjunto {i} do cache!')
                         print_cache(cache)
                         print_lfu(lfu)
-                        pos_troca = lfu[conjunto] % tamanho_bloco
-                        if(pos_troca == pos):
-                            lfu[conjunto] += 1
-                        break
+
                 if(existeEmCache):
                     break
                 
@@ -90,7 +90,7 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
                     for pos, dado_cache in cache[conjunto].items():
                         if(dado_cache == -1):
                             cache[conjunto][pos] = dado
-                            lfu[conjunto] += 1
+
                             print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
                             print_cache(cache)
                             print_lfu(lfu)
@@ -107,9 +107,7 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
                             print_lfu(lfu)
                             break
                     if(not trocouAlgumNulo):
-                        pos_troca = lfu[conjunto] % tamanho_bloco
-                        cache[conjunto][pos_troca] = dado
-                        lfu[conjunto] += 1
+
                         trocas += 1
                         print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} do cache!')
                         print_cache(cache)
