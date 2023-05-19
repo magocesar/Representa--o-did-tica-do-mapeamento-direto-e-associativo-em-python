@@ -40,7 +40,9 @@ def print_cache(cache):
 def print_lfu(lfu):
     print("lfu:")
     print("Conjunto - Quantia de acessos:")
-    print(lfu)
+    for k, v in lfu.items():
+        print(k,v)
+        print("\n")
     print("-=-" * 10)
 
 def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
@@ -54,7 +56,7 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
     
     print("Cache inicializada: ")
     print_cache(cache)
-    print(lfu)
+    print_lfu(lfu)
 
     hits = 0
     misses = 0
