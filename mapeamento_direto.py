@@ -61,10 +61,10 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
 
     print("Cache finalizada: ")
     imprimir_cache(cache)
-    
+
     #for string in lista_trocas:
     #    print(string)
 
-mapeamento_direto(5, [1, 6, 11, 16, 21])
+mapeamento_direto(5, [1, 6, 11, 16, 21, 26, 31, 36, 41, 46, 51, 10, 11])
 
 

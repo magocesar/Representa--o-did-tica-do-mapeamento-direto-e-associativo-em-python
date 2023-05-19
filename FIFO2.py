@@ -75,4 +75,4 @@ def mapeamento_assoc_FIFO(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
 
 
-mapeamento_assoc_FIFO(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {0: 150}, {0: 151}, {1: 152}, {1: 152}, {1: 152}, {1: 152}, {1: 152}, {1: 152}, {1: 152}, {1: 152}, {1: 152}])
+mapeamento_assoc_FIFO(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {1: 70}, {1: 71}])
