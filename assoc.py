@@ -1,12 +1,11 @@
 def criar_cache(num_conjuntos, tamanho_bloco):
     
-    #Tamanhos permitidos para o bloco
+    
     tamanhos_permitidos_bloco = [1, 2, 4, 8, 16]
     numerosConjuntosPermitidos = [2, 4, 8, 16]
     if(tamanho_bloco not in tamanhos_permitidos_bloco or num_conjuntos not in numerosConjuntosPermitidos):
         return False
     
-    #2 Conjuntos na Cache, "tamanho_bloco" linhas por conjunto
     cache = {}
     for i in range(num_conjuntos):
         cache[i] = {}
