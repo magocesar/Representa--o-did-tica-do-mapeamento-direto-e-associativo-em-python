@@ -1,48 +1,100 @@
-def initialize_cache(cache_size):
-    cache = [-1] * cache_size
+def criar_cache(num_conjuntos, tamanho_bloco):
+    
+    
+    tamanhos_permitidos_bloco = [1, 2, 4, 8, 16]
+    numerosConjuntosPermitidos = [2, 4, 8, 16]
+    if(tamanho_bloco not in tamanhos_permitidos_bloco or num_conjuntos not in numerosConjuntosPermitidos):
+        return False
+    
+    cache = {}
+    for i in range(num_conjuntos):
+        cache[i] = {}
+        for j in range(tamanho_bloco):
+            cache[i][j] = -1
     return cache
 
-def print_cache(cache):
-    print("Cache:", cache)
+def criar_FIFO(num_conjuntos):
 
-def simulate_cache_access(memory, cache_size, set_size):
-    cache_blocks = cache_size // set_size
-    cache = initialize_cache(cache_size)  # Inicializa a cache com todas as posições como -1
+    numBlocosPermitidos = [2, 4, 8, 16]
+
+    if(num_conjuntos not in numBlocosPermitidos):
+        return False
+    
+    fifo = {}
+    for i in range(num_conjuntos):
+        fifo[i] = -1
+    return fifo
+
+
+def print_cache(cache):
+    print("-=-" * 10)
+    print("Posição - Valor")
+    for k, v in cache.items():
+        print(k, v)
+    print("-=-" * 10)
+
+def print_fifo(fifo):
+    print("LRU:")
+    print("Conjunto - Posição LRU")
+    for k, v in fifo.items():
+        print(f'[{k}, {v}]')
+    print("-=-" * 10)
+
+def mapeamento_assoc_FIFO(num_conjuntos, tamanho_bloco, lista_dados_memoria):
+    cache = criar_cache(num_conjuntos, tamanho_bloco)
+    fifo = criar_FIFO(num_conjuntos)  # Inicializa a cache com todas as posições como -1
+
     hits = 0
     misses = 0
-    fifo_queue = []  # Fila para manter o controle dos blocos na ordem em que foram adicionados
 
     print("Cache Inicial:")
     print_cache(cache)
     print()
 
-    for address in memory:
-        set_index = address % (cache_size // set_size)  # Calcula o índice do conjunto para o endereço atual
-        block_index = set_index * set_size  # Calcula o índice inicial do bloco correspondente ao conjunto
+    for dict in lista_dados_memoria:
+        for key, value in dict.items():
+            conjunto = key
+            dado = value
 
-        if address in cache[block_index : block_index + set_size]:
-            hits += 1
-            print("Hit! O endereço", address, "está presente na cache.")
-        else:
-            misses += 1
-            print("Miss! O endereço", address, "não está presente na cache.")
+            for i in range(num_conjuntos):
+                if(dado in cache[i].values()):
+                    hits += 1 
+                    print(f'Hit! Dado {dado} encontrado no conjunto {conjunto}')
+                    print_cache(cache)
+                    print_fifo(fifo)
+                    break
+                else:
+                    misses+=1
+                    print(f'Miss! Dado {dado} não encontrado no conjunto {conjunto}')
+                    if (fifo[conjunto] == -1):
+                        for pos, dado_cache in cache[conjunto].items():
+                            if(dado_cache == -1):
+                                cache[conjunto][pos] = dado
+                                fifo[conjunto] = pos + 1
+                                print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} da cache!')
+                                print_cache(cache)
+                                print_fifo(fifo)
+                                break
+                    else:
+                        flag = False
+                        for pos, dado_cache in cache[conjunto].items(): 
+                            if(dado_cache == -1):
+                                flag = True
+                                cache[conjunto][pos] = dado
+                                fifo[conjunto] += 1
+                                print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} da cache!')
+                                print_cache(cache)
+                                print_fifo(fifo)
+                                break
+                        if(not flag): 
+                            pos_troca = fifo[conjunto] 
+                            cache[conjunto][pos_troca] = dado
+                            fifo[conjunto] = (pos_troca + 1) % tamanho_bloco
+                            print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} da cache!')
+                            print_cache(cache)
+                            print_fifo(fifo)
+    print(f'Hits: {hits}')
+    print(f'Misses: {misses}')
+    print(f'Taxa de acerto: {hits/(hits+misses)}')
 
-            if len(fifo_queue) == cache_blocks:
-                removed_block_index = fifo_queue.pop(0)  # Remove o índice do bloco mais antigo da fila
-                cache[removed_block_index] = -1  # Substitui o bloco mais antigo com -1 na cache
-
-            cache[block_index] = address  # Adiciona o endereço atual ao bloco correspondente na cache
-            fifo_queue.append(block_index)  # Adiciona o índice do bloco à fila
-
-        print_cache(cache)
-        print()
-
-    print("Resumo:")
-    print("Hits:", hits)
-    print("Misses:", misses)
-
-# Exemplo de uso
-memory = [5, 7, 10, 12, 5, 15, 20, 10, 12, 25, 5, 30]
-cache_size = 8  # Tamanho da cache
-set_size = 4    # Tamanho do conjunto
-simulate_cache_access(memory, cache_size, set_size)
+mapeamento_assoc_FIFO(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {0: 150}, {0: 151}, {1: 152}])
