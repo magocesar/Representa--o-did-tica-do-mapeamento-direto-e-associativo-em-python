@@ -37,7 +37,7 @@ def print_lru(lru):
     print("LRU:")
     print("Conjunto - Posição LRU")
     for k, v in lru.items():
-        print(f'[{k}, {v}]')
+        print(f'{k}, {v}')
     print("-=-" * 10)
 
 def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
@@ -51,7 +51,7 @@ def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
     
     print("Cache inicializada: ")
     print_cache(cache)
-    print(lru)
+    print_lru(lru)
 
     hits = 0
     misses = 0
@@ -62,15 +62,25 @@ def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
             conjunto = key
             dado = value
 
+            existeEmCache = False
+
             for i in range(num_conjuntos):
-                if(dado in cache[i].values()):
-                    hits += 1
-                    print(f"Hit: Valor {dado} no conjunto {conjunto} do cache!")
-                    print_cache(cache)
-                    print_lru(lru)
+                for pos, dado_cache in cache[i].items():
+                    if(dado_cache == dado):
+                        existeEmCache = True
+                        hits += 1
+                        print(f'Hit: Valor {dado} na posição {pos} do conjunto {i} do cache!')
+                        print_cache(cache)
+                        print_lru(lru)
+                        pos_troca = lru[conjunto] % tamanho_bloco
+                        if(pos_troca == pos):
+                            lru[conjunto] += 1
+                        break
+                if(existeEmCache):
                     break
 
-            else:
+    
+            if(not existeEmCache):
                 misses += 1
                 print(f'Miss: Valor {dado} não está no cache!')
                 if(lru[conjunto] == -1):
@@ -83,17 +93,17 @@ def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
                             print_lru(lru)
                             break
                 else:
-                    flag = False
+                    trocouAlgumNulo = False
                     for pos, dado_cache in cache[conjunto].items():
                         if(dado_cache == -1):
-                            flag = True
+                            trocouAlgumNulo = True
                             cache[conjunto][pos] = dado
                             lru[conjunto] += 1
                             print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
                             print_cache(cache)
                             print_lru(lru)
                             break
-                    if(not flag):
+                    if(not trocouAlgumNulo):
                         pos_troca = lru[conjunto] % tamanho_bloco
                         cache[conjunto][pos_troca] = dado
                         lru[conjunto] += 1
@@ -108,4 +118,4 @@ def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
     
 #input int num_conjuntos, int tamanho_bloco, list lista_dados_memoria
-mapeamento_assoc_LRU(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {0: 150}, {0: 151}, {1: 152}])
+mapeamento_assoc_LRU(2, 2, [{0: 1}, {0: 6}, {0: 1}, {0: 11}, {1: 16}, {1: 21}])
