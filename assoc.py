@@ -118,4 +118,4 @@ def mapeamento_assoc_LRU(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
     
 #input int num_conjuntos, int tamanho_bloco, list lista_dados_memoria
-mapeamento_assoc_LRU(2, 4, [{0: 1}, {0: 6}, {0: 1}, {0: 11}, {1: 16}, {1: 21}])
+mapeamento_assoc_LRU(2, 2, [{0 : 0}, {0 : 1}, {0 : 2}, {0 : 3}, {0 : 4}, {0 : 5}])

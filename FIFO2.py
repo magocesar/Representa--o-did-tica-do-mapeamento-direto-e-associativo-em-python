@@ -39,6 +39,7 @@ def mapeamento_assoc_FIFO(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
     hits = 0
     misses = 0
+    Trocas = 0
 
     print("Cache Inicial:")
     print_cache(cache)
@@ -68,11 +69,13 @@ def mapeamento_assoc_FIFO(num_conjuntos, tamanho_bloco, lista_dados_memoria):
                     print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} da cache!')
                     print_cache(cache)
                     print_fifo(fifo)
+                    Trocas += 1
     
     print(f'Hits: {hits}')
     print(f'Misses: {misses}')
+    print(f'Trocas: {Trocas}')
     print(f'Taxa de acerto: {hits / (hits + misses)}')
 
 
 
-mapeamento_assoc_FIFO(2, 4, [{0: 78}, {0: 29}, {0: 24}, {0: 21}, {0: 71}, {1: 70}, {1: 71}])
+mapeamento_assoc_FIFO(2, 2, [{0 : 0}, {0 : 1}, {0 : 2}, {0 : 3}, {0 : 1}, {0 : 4}, {0 : 5}, {0 : 6}])
