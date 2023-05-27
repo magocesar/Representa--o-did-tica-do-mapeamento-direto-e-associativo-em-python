@@ -65,6 +65,6 @@ def mapeamento_direto(tamanho_cache, pos_memoria):
     for string in lista_trocas:
        print(string)
 
-mapeamento_direto(4, [1, 2, 3, 4, 5])
+mapeamento_direto(5,[0,1,2,2,22,32,42,20,1,10,11,12,13])
 
 
