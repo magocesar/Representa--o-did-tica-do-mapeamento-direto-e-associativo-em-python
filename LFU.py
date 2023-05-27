@@ -20,7 +20,7 @@ def criar_lfu(num_conjuntos, tamanho_bloco):
     if(num_conjuntos not in numBlocosPermitidos):
         return False
     
-    lfu = {}
+    lfu = {}    
     blocos = {}
     for i in range(num_conjuntos):
         for num_blo in range(tamanho_bloco):
@@ -40,8 +40,24 @@ def print_cache(cache):
 def print_lfu(lfu):
     print("lfu:")
     print("Conjunto - Quantia de acessos:")
-    print(lfu)
+    for k, v in lfu.items():
+            print(k,"-----",v)
+            print("\n") 
     print("-=-" * 10)
+    
+def acha_lfu(lfu,conjunto):
+    menor = 10000000000000000000000000000000
+    for k,v in lfu[conjunto].items():
+        if(v < menor):
+            menor = v
+            posicao_retornado=k
+    return(posicao_retornado)
+
+def obteve_acesso(lfu,conjunto,pos):
+    posicao_mexida = lfu[conjunto][pos]
+    posicao_mexida +=1
+    lfu[conjunto][pos] = posicao_mexida
+    return(lfu)
 
 def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
 
@@ -54,7 +70,7 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
     
     print("Cache inicializada: ")
     print_cache(cache)
-    print(lfu)
+    print_lfu(lfu)
 
     hits = 0
     misses = 0
@@ -64,54 +80,44 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
         for key, value in dict.items():
             conjunto = key
             dado = value
+            
             existeEmCache = False
-
-            for i in range(num_conjuntos):
-                for pos, dado_cache in cache[i].items():
-                    if(dado_cache == dado):
-                        existeEmCache = True
-                        hits += 1
-                        print(f'Hit: Valor {dado} na posição {pos} do conjunto {i} do cache!')
-                        print_cache(cache)
-                        print_lfu(lfu)
-                        pos_troca = lfu[conjunto] % tamanho_bloco
-                        if(pos_troca == pos):
-                            lfu[conjunto] += 1
-                        break
-                if(existeEmCache):
+            for pos, dado_cache in cache[conjunto].items():
+                if(dado_cache == dado):
+                    existeEmCache = True
+                    cache[conjunto][pos] = dado
+                    lfu = obteve_acesso(lfu,conjunto,pos)
+                    hits += 1
+                    print(f'Hit: Valor {dado} na posição {pos} do conjunto {conjunto} do cache!')
+                    print_cache(cache)
+                    print_lfu(lfu)
                     break
-                
-            if(not existeEmCache):
+
+            if(existeEmCache):
+                break
+            
+            else:
                 misses += 1
                 print(f'Miss: Valor {dado} não está no cache!')
-                if(lfu[conjunto] == -1):
-                    for pos, dado_cache in cache[conjunto].items():
-                        if(dado_cache == -1):
-                            cache[conjunto][pos] = dado
-                            lfu[conjunto] += 1
-                            print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
-                            print_cache(cache)
-                            print_lfu(lfu)
-                            break
-                else:
-                    trocouAlgumNulo = False
-                    for pos, dado_cache in cache[conjunto].items():
-                        if(dado_cache == -1):
-                            trocouAlgumNulo = True
-                            cache[conjunto][pos] = dado
-                            lfu[conjunto] += 1
-                            print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
-                            print_cache(cache)
-                            print_lfu(lfu)
-                            break
-                    if(not trocouAlgumNulo):
-                        pos_troca = lfu[conjunto] % tamanho_bloco
-                        cache[conjunto][pos_troca] = dado
-                        lfu[conjunto] += 1
-                        trocas += 1
-                        print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} do cache!')
+                trocouAlgumNulo = False
+                for pos, dado_cache in cache[conjunto].items():
+                    if(dado_cache == -1):
+                        trocouAlgumNulo = True
+                        cache[conjunto][pos] = dado
+                        lfu = obteve_acesso(lfu,conjunto,pos)
+                        print(f'Valor {dado} foi armazenado na posição {pos} do conjunto {conjunto} do cache!')
                         print_cache(cache)
                         print_lfu(lfu)
+                        break
+                if(not trocouAlgumNulo):
+                    pos_troca = acha_lfu(lfu,conjunto)
+                    cache[conjunto][pos_troca] = dado
+                    lfu = obteve_acesso(lfu,conjunto,pos_troca)
+                    trocas += 1
+                    print(f'Valor {dado} foi armazenado na posição {pos_troca} do conjunto {conjunto} do cache!')
+                    print_cache(cache)
+                    print_lfu(lfu)
+                    break
                         
     print(f'Hits: {hits}')                     
     print(f'Misses: {misses}')
@@ -121,14 +127,4 @@ def mapeamento_assoc_lfu(num_conjuntos, tamanho_bloco, lista_dados_memoria):
     
 #input int num_conjuntos, int tamanho_bloco, list lista_dados_memoria
 mapeamento_assoc_lfu(2, 2, 
-                     [{0: 78}, 
-                      {0: 79},
-                       
-                      {1: 24}, 
-                      {1: 21}, 
-                      
-                      {0: 78}, 
-                      {0: 150}, 
-                      
-                      {1: 150}, 
-                      {1: 152}])
+                     [{0: 0}, {0: 1}, {0 :2}, {0 : 3}, {0 : 1}, {0 : 4}, {0 : 5},  {0 : 6}])
